@@ -88,10 +88,11 @@ if [ -f $audioLeft ] && [ -f $audioRight ] && [ -z "$force" ]; then
   # If the files already exist and we're not forcing, skip
   echo ">>> Files already exist. Skipping."
 else
-  echo ">>>> Extracting audio..."
   if [ $videoSpeedFactor = 1 ]; then
+    echo ">>>> Extracting audio..."
     ffmpeg -y -i $video -filter_complex "[0:a] pan=mono|FC=FL, atempo=$audioSpeedFactor [left]; [0:a] pan=mono|FC=FR, atempo=$audioSpeedFactor [right]" -map "[left]" -vn $audioLeftTemp -map "[right]" -vn $audioRightTemp
   else
+    echo ">>>> Extracting audio and video..."
     ffmpeg -y -i $video -filter_complex "[0:v] setpts=1/$videoSpeedFactor*PTS [video]; [0:a] pan=mono|FC=FL, atempo=$audioSpeedFactor*$videoSpeedFactor [left]; [0:a] pan=mono|FC=FR, atempo=$audioSpeedFactor*$videoSpeedFactor [right]" -map "[video]" -an "$videoOnly" -map "[left]" -vn $audioLeftTemp -map "[right]" -vn $audioRightTemp
   fi
   if [ ! -z "$noiseProfile" ]; then

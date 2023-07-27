@@ -31,7 +31,9 @@ noiseProfilesDir="../assets/noise_profile"
 # done
 
 for f in $(find "$ArollDir" -name "*cam*.mov" ! -name "*_video_only.mov"); do
-  echo "<> $f"
+  echo | tee -a $logfile
+  echo | tee -a $logfile
+  echo "<> $f" | tee -a $logfile
 
   # Check if there is a .denoise file and, if so, get the noise profile
   denoiseRC=$(dirname "$f")/.denoise
@@ -40,18 +42,32 @@ for f in $(find "$ArollDir" -name "*cam*.mov" ! -name "*_video_only.mov"); do
   else
     noiseProfile="-"
   fi
-  echo "<> $denoiseRC"
-  echo "<> $noiseProfile"
+  # Check if there is a .preprocess file and, if so, get the variables set in there
+  preprocessRC=$(dirname "$f")/.preprocess
+  if [ -f "$preprocessRC" ]; then
+    . "$preprocessRC"
+    [ ! -z "$noiseProfile" ] && noiseProfile="$noiseProfilesDir"/"$noiseProfile"
+  else
+    # If no noise profile was found but one was found in the denoiseRC then
+    # don't reset it. If nothing has been found, then there's really nothing to
+    # do.
+    [ -z $noiseProfile ] && noiseProfile="-"
+  fi
+  echo "<> denoiseRC: $denoiseRC" | tee -a $logfile
+  echo "<> preprocessRC: $preprocessRC" | tee -a $logfile
+  echo "<> noiseProfile: $noiseProfile" | tee -a $logfile
+  echo "<> audioSpeedFactor: $audioSpeedFactor" | tee -a $logfile
+  echo "<> videoSpeedFactor: $videoSpeedFactor" | tee -a $logfile
 
   # Set the appropriate speed factor for each camera
   case "$f" in
     *maincam*)
-      audioSpeedFactor=0.96618
-      videoSpeedFactor=1.03331926269875
+      [ -z $audioSpeedFactor ] && audioSpeedFactor=0.96618
+      [ -z $videoSpeedFactor ] && videoSpeedFactor=1.03331926269875
       ;;
     *sidecam*)
-      audioSpeedFactor=0.9984371585
-      videoSpeedFactor=1
+      [ -z $audioSpeedFactor ] && audioSpeedFactor=0.9984371585
+      [ -z $videoSpeedFactor ] && videoSpeedFactor=1
       ;;
   esac
 

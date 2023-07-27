@@ -45,10 +45,16 @@ for f in $(find "$ArollDir" -name "*cam*.mov"); do
 
   # Set the appropriate speed factor for each camera
   case "$f" in
-    *maincam*) speedFactor=0.96618 ;;
-    *sidecam*) speedFactor=0.9984371585 ;;
+    *maincam*)
+      audioSpeedFactor=0.96618
+      videoSpeedFactor=1.03331926269875
+      ;;
+    *sidecam*)
+      audioSpeedFactor=0.9984371585
+      videoSpeedFactor=1
+      ;;
   esac
 
-  ./preprocess_video.sh "$f" $speedFactor "$noiseProfile" force | tee -a $logfile
+  ./preprocess_video.sh "$f" $audioSpeedFactor $videoSpeedFactor "$noiseProfile" force | tee -a $logfile
 
 done

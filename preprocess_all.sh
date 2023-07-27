@@ -55,6 +55,6 @@ for f in $(find "$ArollDir" -name "*cam*.mov" ! -name "*_video_only.mov"); do
       ;;
   esac
 
-  ./preprocess_video.sh "$f" $audioSpeedFactor $videoSpeedFactor "$noiseProfile" force | tee -a $logfile
+  ./preprocess_video.sh "$f" $audioSpeedFactor $videoSpeedFactor "$noiseProfile" | tee -a $logfile
 
 done

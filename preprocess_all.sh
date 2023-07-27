@@ -30,7 +30,7 @@ noiseProfilesDir="../assets/noise_profile"
 #   ./preprocess_sidecam.sh "$f" | tee -a $logfile
 # done
 
-for f in $(find "$ArollDir" -name "*cam*.mov"); do
+for f in $(find "$ArollDir" -name "*cam*.mov" ! -name "*_video_only.mov"); do
   echo "<> $f"
 
   # Check if there is a .denoise file and, if so, get the noise profile
